@@ -1,14 +1,14 @@
-
-import './App.css';
+import React from "react";
+import "./App.css";
 import Board from "./components/Board";
 
 function App() {
-  return (
-    <div className="App">
-        <h1>Minesweeper</h1>
-        <Board/>
-    </div>
-  );
+    return (
+        <div className="App">
+            <h1 style={{ fontFamily: "Fredoka One" }}>Minesweeper</h1>
+            <Board />
+        </div>
+    );
 }
 
 export default App;

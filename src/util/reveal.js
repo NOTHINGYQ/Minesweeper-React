@@ -4,9 +4,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         // console.log(arr[x][y])
         return;
     }
-
-    // Stack of all the cells which we
-    // would like to reveal/flip
     let flipped = [];
     flipped.push(arr[x][y]);
     while (flipped.length !== 0) {
@@ -21,7 +18,7 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
             break;
         }
 
-        //Top - Left
+        // setTimeout(() => {
         if (
             single.x > 0 &&
             single.y > 0 &&
@@ -30,8 +27,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x - 1][single.y - 1]);
         }
-
-        // Bottom - Right
         if (
             single.x < arr.length - 1 &&
             single.y < arr[0].length - 1 &&
@@ -40,8 +35,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x + 1][single.y + 1]);
         }
-
-        // Bottom - Left
         if (
             single.x < arr.length - 1 &&
             single.y > 0 &&
@@ -50,8 +43,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x + 1][single.y - 1]);
         }
-
-        // Top - Right
         if (
             single.x > 0 &&
             single.y < arr[0].length - 1 &&
@@ -62,8 +53,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         }
 
         // Single ones
-
-        // Top
         if (
             single.x > 0 &&
             arr[single.x - 1][single.y].value === 0 &&
@@ -71,8 +60,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x - 1][single.y]);
         }
-
-        // Bottom
         if (
             single.x < arr.length - 1 &&
             arr[single.x + 1][single.y].value === 0 &&
@@ -80,8 +67,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x + 1][single.y]);
         }
-
-        // Left
         if (
             single.y > 0 &&
             arr[single.x][single.y - 1].value === 0 &&
@@ -89,8 +74,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         ) {
             flipped.push(arr[single.x][single.y - 1]);
         }
-
-        // Right
         if (
             single.y < arr[0].length - 1 &&
             arr[single.x][single.y + 1].value === 0 &&
@@ -112,7 +95,7 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
         }
 
         if (single.y > 0 && !arr[single.x][single.y - 1].revealed) {
-            // Left Reveal
+            // Top Reveal
             arr[single.x][single.y - 1].revealed = true;
             newNonMinesCount--;
         }
@@ -122,19 +105,19 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
             single.y > 0 &&
             !arr[single.x + 1][single.y - 1].revealed
         ) {
-            //Bottom Left Reveal
+            //Top Right Reveal
             arr[single.x + 1][single.y - 1].revealed = true;
             newNonMinesCount--;
         }
 
         if (single.x > 0 && !arr[single.x - 1][single.y].revealed) {
-            //Top Reveal
+            //Left Reveal
             arr[single.x - 1][single.y].revealed = true;
             newNonMinesCount--;
         }
 
         if (single.x < arr.length - 1 && !arr[single.x + 1][single.y].revealed) {
-            // Bottom Reveal
+            // Right Reveal
             arr[single.x + 1][single.y].revealed = true;
             newNonMinesCount--;
         }
@@ -144,13 +127,13 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
             single.y < arr[0].length - 1 &&
             !arr[single.x - 1][single.y + 1].revealed
         ) {
-            // Top Right Reveal
+            // Bottom Left Reveal
             arr[single.x - 1][single.y + 1].revealed = true;
             newNonMinesCount--;
         }
 
         if (single.y < arr[0].length - 1 && !arr[single.x][single.y + 1].revealed) {
-            //Right Reveal
+            //Bottom Reveal
             arr[single.x][single.y + 1].revealed = true;
             newNonMinesCount--;
         }
@@ -165,6 +148,6 @@ export const revealed = (arr, x, y, newNonMinesCount) => {
             newNonMinesCount--;
         }
     }
-
+    //   console.log(arr);
     return { arr, newNonMinesCount };
 };

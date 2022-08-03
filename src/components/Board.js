@@ -2,100 +2,86 @@ import React, { useState, useEffect } from "react";
 import createBoard from "../util/createBoard";
 import Cell from "./Cell";
 import { revealed } from "../util/reveal";
+import TopBar from "./TopBar";
 import Modal from "./Modal";
-import Timer from "./Timer";
-
-const Board = () => {
-    const [grid, setGrid] = useState([]);
-    const [nonMineCount, setNonMineCount] = useState(0);
+export default function Board() {
+    const [board, setBoard] = useState([]);
     const [mineLocations, setMineLocations] = useState([]);
+    const [nonMinesCount, setNonMinesCount] = useState(0);
     const [gameOver, setGameOver] = useState(false);
+    const [restart, setRestart] = useState(false);
+    const [newTime, setTime] = useState(0);
 
-    // ComponentDidMount
     useEffect(() => {
-        // Creating a board
+        const generateBoard = () => {
+            const getBoard = createBoard(10, 15, 20, setMineLocations);
+            setNonMinesCount(100 - 20);
+            setTime(0);
+            setBoard(getBoard.board);
+            setMineLocations(getBoard.mineLocation);
+            setGameOver(false);
+            setRestart(false);
+        };
+        generateBoard();
+    }, [restart, setRestart]);
 
-        // Calling the function
-        freshBoard();
-    }, []);
-
-    const freshBoard = () => {
-        const newBoard = createBoard(10, 15, 15);
-        setNonMineCount(10 * 15 - 15);
-        setMineLocations(newBoard.mineLocation);
-        setGrid(newBoard.board);
-    };
-
-    const restartGame = () => {
-        freshBoard();
-        setGameOver(false);
-    };
-
-    // On Right Click / Flag Cell
-    const updateFlag = (e, x, y) => {
-        // to not have a dropdown on right click
-        e.preventDefault();
-        // Deep copy of a state
-        let newGrid = JSON.parse(JSON.stringify(grid));
-        console.log(newGrid[x][y]);
-        newGrid[x][y].flagged = true;
-        setGrid(newGrid);
-    };
-
-    // Reveal Cell
-    const revealCell = (x, y) => {
-        if (grid[x][y].revealed || gameOver) {
-            return;
-        }
-        let newGrid = JSON.parse(JSON.stringify(grid));
-        if (newGrid[x][y].value === "X") {
+    const updateBoard = (x, y, e) => {
+        let newBoardValues = JSON.parse(JSON.stringify(board));
+        let newNonMinesCount = nonMinesCount;
+        if (newBoardValues[x][y].value === "X") {
             for (let i = 0; i < mineLocations.length; i++) {
-                newGrid[mineLocations[i][0]][mineLocations[i][1]].revealed = true;
+                if (
+                    !newBoardValues[mineLocations[i][0]][mineLocations[i][1]].revealed
+                ) {
+                    // setInterval(() => {
+                    newBoardValues[mineLocations[i][0]][
+                        mineLocations[i][1]
+                        ].revealed = true;
+                    setBoard(newBoardValues);
+
+                    // }, 500);
+                }
             }
-            setGrid(newGrid);
             setGameOver(true);
         } else {
-            let newRevealedBoard = revealed(newGrid, x, y, nonMineCount);
-            setGrid(newRevealedBoard.arr);
-            setNonMineCount(newRevealedBoard.newNonMinesCount);
-            if (newRevealedBoard.newNonMinesCount === 0) {
-                setGameOver(true);
+            // newBoardValues[x][y].revealed = true;
+            newBoardValues = revealed(newBoardValues, x, y, newNonMinesCount);
+            if (!newBoardValues) {
+                return;
             }
+            setBoard(newBoardValues.arr);
+            setNonMinesCount(newBoardValues.newNonMinesCount);
         }
+    };
+
+    const flagCell = (x, y) => {
+        let newBoardValues = JSON.parse(JSON.stringify(board));
+        newBoardValues[x][y].flagged = !newBoardValues[x][y].flagged;
+        setBoard(newBoardValues);
     };
 
     return (
-        <div>
-            <p>Minesweeper</p>
-            <Timer />
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    position: "relative",
-                }}
-            >
-                {gameOver && <Modal restartGame={restartGame} />}
-                {grid.map((singleRow, index1) => {
-                    return (
-                        <div style={{ display: "flex" }} key={index1}>
-                            {singleRow.map((singleBlock, index2) => {
-                                return (
-                                    <Cell
-                                        revealCell={revealCell}
-                                        details={singleBlock}
-                                        updateFlag={updateFlag}
-                                        key={index2}
-                                    />
-                                );
-                            })}
-                        </div>
-                    );
-                })}
-            </div>
+        <div
+            style={{ boxShadow: "0 4px 3px rgba(0,0,0,0.3)", position: "relative" }}
+        >
+            {gameOver && <Modal reset={setRestart} completeTime={newTime} />}
+            <TopBar gameOver={gameOver} setTime={setTime} newTime={newTime} />
+            {board.map((row, inde) => {
+                return (
+                    <div style={{ display: "flex" }} key={inde}>
+                        {row.map((singleCell, index) => {
+                            return (
+                                <Cell
+                                    key={index}
+                                    data={singleCell}
+                                    updateBoard={updateBoard}
+                                    flagCell={flagCell}
+                                />
+                            );
+                        })}
+                    </div>
+                );
+            })}
         </div>
     );
-};
-
-export default Board;
+}

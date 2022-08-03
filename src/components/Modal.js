@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function Modal({ restartGame }) {
+export default function Modal({ reset, completeTime }) {
     const [render, setRender] = useState(false);
     useEffect(() => {
         setTimeout(() => {
@@ -18,7 +18,7 @@ export default function Modal({ restartGame }) {
             }}
         >
             <div id="gameOverImage"></div>
-            <div className="tryAgain" onClick={() => restartGame()}>
+            <div onClick={() => reset()} className="tryAgain">
                 Try Again
             </div>
         </div>

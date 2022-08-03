@@ -1,32 +1,53 @@
 import React from "react";
 import { mineColor } from "../util/mineColors";
-import "../App.css";
 import Circle from "./Circle";
 
-export default function Cell({ details, updateFlag, revealCell }) {
-    const cellstyle = {
-        background: details.revealed
-            ? details.value === "X"
-                ? mineColor()
-                : bombChexPattern(details.x, details.y)
-            : chexPattern(details.x, details.y),
-        color: numColorCode(details.value),
+export default function Cell({ data, updateBoard, flagCell }) {
+    const style = {
+        block: {
+            width: 40,
+            height: 40,
+            color: numColorCode(data.value),
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: 800,
+            fontSize: 30,
+            cursor: "pointer",
+            background: data.revealed
+                ? data.value === "X"
+                    ? mineColor()
+                    : bombChexPattern(data.x, data.y)
+                : chexPattern(data.x, data.y),
+        },
+    };
+
+    const onClickUpdate = (e) => {
+        if (data.flagged) {
+            return;
+        }
+        console.log(e.type);
+        updateBoard(data.x, data.y);
+    };
+
+    const onClickFlag = (e) => {
+        e.preventDefault();
+        flagCell(data.x, data.y);
     };
 
     return (
         <div
-            onContextMenu={(e) => updateFlag(e, details.x, details.y)}
-            onClick={() => revealCell(details.x, details.y)}
-            style={cellstyle}
-            className="cellStyle"
+            style={style.block}
+            onClick={(e) => onClickUpdate(e)}
+            onContextMenu={(e) => onClickFlag(e)}
         >
-            {!details.revealed && details.flagged ? (
+            {data.flagged && !data.revealed ? (
                 "🚩"
-            ) : details.revealed && details.value !== 0 ? (
-                details.value === "X" ? (
+            ) : data.revealed && data.value !== 0 ? (
+                data.value === "X" ? (
                     <Circle />
                 ) : (
-                    details.value
+                    data.value
                 )
             ) : (
                 ""
@@ -34,18 +55,6 @@ export default function Cell({ details, updateFlag, revealCell }) {
         </div>
     );
 }
-
-const bombChexPattern = (x, y) => {
-    if (x % 2 === 0 && y % 2 === 0) {
-        return "#e5c29f";
-    } else if (x % 2 === 0 && y % 2 !== 0) {
-        return "#d7b899";
-    } else if (x % 2 !== 0 && y % 2 === 0) {
-        return "#d7b899";
-    } else {
-        return "#e5c29f";
-    }
-};
 
 const chexPattern = (x, y) => {
     if (x % 2 === 0 && y % 2 === 0) {
@@ -56,6 +65,18 @@ const chexPattern = (x, y) => {
         return "#a2d249";
     } else {
         return "#aad751";
+    }
+};
+
+const bombChexPattern = (x, y) => {
+    if (x % 2 === 0 && y % 2 === 0) {
+        return "#e5c29f";
+    } else if (x % 2 === 0 && y % 2 !== 0) {
+        return "#d7b899";
+    } else if (x % 2 !== 0 && y % 2 === 0) {
+        return "#d7b899";
+    } else {
+        return "#e5c29f";
     }
 };
 
