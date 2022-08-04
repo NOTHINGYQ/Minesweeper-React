@@ -1,12 +1,14 @@
 import React from "react";
 import "./App.css";
-import Board from "./components/Board";
+import Main from "./components/main";
+
 
 function App() {
     return (
-        <div className="App">
-            <h1 style={{ fontFamily: "Fredoka One" }}>Minesweeper</h1>
-            <Board />
+        <div style={{margin:'auto'}} >
+            <h1 style={{ fontFamily: "Fredoka One" , display: 'block', textAlign:'center', color:'blue'}} >Minesweeper</h1>
+            <Main />
+
         </div>
     );
 }
